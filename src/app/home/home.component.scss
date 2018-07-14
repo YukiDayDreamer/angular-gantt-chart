@@ -1,0 +1,13 @@
+.sidenav-container {
+  padding: 0 20px;
+}
+
+.sidenav {
+  width: 250px;
+  min-height: 100%;
+}
+
+[mwlResizable] {
+  border-right: 3px solid gray;
+  box-sizing: border-box;
+}

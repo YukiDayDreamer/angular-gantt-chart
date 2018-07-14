@@ -1,0 +1,76 @@
+{
+  "name": "Example Chart",
+  "progress": 50,
+  "dates": {
+    "start": "2018-07-01",
+    "end": "2018-07-30"
+  },
+  "steps": [
+    {
+      "name": "step1",
+      "progress": 65,
+      "dates": {
+        "start": "2018-07-01",
+        "end": "2018-07-10"
+      },
+      "steps": [
+        {
+          "name": "step1.1",
+          "progress": 70,
+          "dates": {
+            "start": "2018-07-03",
+            "end": "2018-07-05"
+          },
+          "steps": []
+        },
+        {
+          "name": "step1.2",
+          "progress": 60,
+          "dates": {
+            "start": "2018-07-07",
+            "end": "2018-07-08"
+          },
+          "steps": []
+        }
+      ]
+    },
+    {
+      "name": "step2",
+      "progress": 30,
+      "dates": {
+        "start": "2018-07-10",
+        "end": "2018-07-20"
+      },
+      "steps": [
+        {
+          "name": "step2.1",
+          "progress": 30,
+          "dates": {
+            "start": "2018-07-12",
+            "end": "2018-07-19"
+          },
+          "steps": [
+            {
+              "name": "step2.1.1",
+              "progress": 40,
+              "dates": {
+                "start": "2018-07-14",
+                "end": "2018-07-17"
+              },
+              "steps": []
+            },
+            {
+              "name": "step2.1.2",
+              "progress": 20,
+              "dates": {
+                "start": "2018-07-17",
+                "end": "2018-07-19"
+              },
+              "steps": []
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

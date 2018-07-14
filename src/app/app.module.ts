@@ -5,6 +5,7 @@ import { MaterialModule } from './app-material/material.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { FlexLayoutModule } from '@angular/flex-layout';
 import { HttpClientModule } from '@angular/common/http';
+import { ResizableModule } from 'angular-resizable-element';
 import { AppRoutingModule } from './app-routing/app-routing.module';
 
 import 'hammerjs';
@@ -20,7 +21,8 @@ import { HomeComponent } from './home/home.component';
     MaterialModule, FormsModule, ReactiveFormsModule,
     FlexLayoutModule,
     HttpClientModule,
-    AppRoutingModule,
+    ResizableModule,
+    AppRoutingModule
   ],
   declarations: [
     AppComponent,
