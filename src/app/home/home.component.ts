@@ -4,6 +4,9 @@ import { ResizeEvent } from 'angular-resizable-element';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
 import { BehaviorSubject, Observable, of } from 'rxjs';
+import * as Moment from 'moment';
+import { extendMoment } from 'moment-range';
+const moment = extendMoment(Moment);
 
 import { Step } from '../models/step';
 
@@ -13,7 +16,8 @@ import * as Utils from '../utils';
 export class StepFlatNode {
   constructor(
     public expandable: boolean, public level: number,
-    public name: string, public progress: any,
+    public name: string, public progress: number,
+    public progressDates: string[],
     public dates: {
       start: string;
       end: string;
@@ -22,6 +26,7 @@ export class StepFlatNode {
 
 @Injectable()
 export class ChartDatabase {
+  moment = moment;
   dataChange = new BehaviorSubject<Step>(null);
 
   constructor(private http: HttpClient) {
@@ -31,7 +36,6 @@ export class ChartDatabase {
   initialize() {
     // Parse the string to json object.
     this.http.get('../../assets/data/tree.json').subscribe((root: Step) => {
-      console.log(root.steps);
       const tree = this.buildTree(root.steps, 0); // build tree
       root.steps = tree;
       this.dataChange.next(root);
@@ -43,6 +47,16 @@ export class ChartDatabase {
       const node = new Step();
       node.name = step.name;
       node.progress = step.progress;
+      node.dates = step.dates;
+      // build progress dates
+      const start = this.moment(step.dates.start);
+      const end = this.moment(step.dates.end);
+      const range = moment.range(start, end);
+
+      const numDays = Math.round(range.diff('days') * node.progress / 100); // estimated completed days
+      const totalDays = Array.from(range.by('days')).map(d => d.format('YYYY-MM-DD')); // all days in string array
+      node.progressDates = totalDays.splice(0, numDays); // start from 0, get the first len days
+
       if (step.steps.length) {
         node.steps = this.buildTree(step.steps, level + 1);
       } else {
@@ -64,6 +78,9 @@ export class ChartDatabase {
   providers: [ChartDatabase]
 })
 export class HomeComponent implements OnInit {
+  moment = moment;
+  dates: string[] = []; // all days in chart
+
   utils = Utils;
 
   treeControl: FlatTreeControl<StepFlatNode>;
@@ -84,13 +101,15 @@ export class HomeComponent implements OnInit {
       if (root) {
         this.chartData = root;
         this.dataSource.data = root.steps;
+        this.dates = this.buildCalendar(root);
+        console.log(root);
       }
     });
   }
 
   /** utils of building tree */
   transformer = (node: Step, level: number) => {
-    return new StepFlatNode(!!node.steps.length, level, node.name, node.progress, node.dates);
+    return new StepFlatNode(!!node.steps.length, level, node.name, node.progress, node.progressDates, node.dates);
   }
 
   private _getLevel = (node: StepFlatNode) => node.level;
@@ -121,6 +140,15 @@ export class HomeComponent implements OnInit {
     this.sidebarStyle = {
       'width': `${event.rectangle.width}px`
     };
+  }
+
+  buildCalendar(step: Step) {
+    const start = this.moment(step.dates.start);
+    const end = this.moment(step.dates.end);
+    const range = this.moment.range(start, end);
+
+    const days = Array.from(range.by('days'));
+    return days.map(d => d.format('YYYY-MM-DD'));
   }
 
 }

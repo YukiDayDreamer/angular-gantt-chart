@@ -1,13 +1,85 @@
-.sidenav-container {
-  padding: 0 20px;
-}
-
+// variables
+$toolbarHeight: 64px;
+$nodeWidth: 60px;
+$nodeHeight: 50px;
+$completeColor: #2196F3;
+$incompleteColor: #9E9E9E;
+$borderColor: #BDBDBD;
+// sidenav
 .sidenav {
   width: 250px;
   min-height: 100%;
+  height: fit-content;
 }
 
+// table content
+.sidenav-content {
+  min-height: 100%;
+  height: fit-content;
+  overflow-x: auto;
+}
+
+// resizable border
 [mwlResizable] {
-  border-right: 3px solid gray;
+  border-right: 3px solid $borderColor;
   box-sizing: border-box;
+}
+
+// sidenav header(not calendar)
+.sidenav-header {
+  text-align: center;
+  line-height: $nodeHeight - 2px;
+  height: $nodeHeight - 2px;
+  min-height: $nodeHeight - 2px;
+  border-width: 1px 3px 1px 0;
+  border-color: $borderColor;
+  border-style: solid;
+}
+
+// tree node height for sidebar
+::ng-deep mat-tree-node {
+  height: $nodeHeight;
+  min-height: $nodeHeight;
+}
+
+/** names */
+
+.sidenav.names mat-tree.tree {
+  padding-top: 14px; // align the lines of input and table
+}
+
+/** calendar */
+
+// header
+::ng-deep .calendar-header {
+  height: $nodeHeight;
+  min-height: $nodeHeight;
+}
+
+// row
+::ng-deep mat-tree-node.calendar-row {
+  overflow: unset; // allow the row to overflow
+}
+
+// cell
+::ng-deep .calendar-cell {
+  text-align: center;
+  line-height: $nodeHeight - 1px;
+  width: $nodeWidth - 1px;
+  height: $nodeHeight - 1px;
+  min-width: $nodeWidth - 1px;
+  min-height: $nodeHeight - 1px;
+  border-width: 0.5px 1px 0.5px 0;
+  border-color: $borderColor;
+  border-style: solid;
+}
+
+// completed cell
+::ng-deep .calendar-cell[date-filled=true][date-inside=true] {
+  background-color: $completeColor;
+}
+
+// incompleted cell
+::ng-deep .calendar-cell[date-filled=false][date-inside=true] {
+  background-color: $incompleteColor;
 }

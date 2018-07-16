@@ -27,6 +27,8 @@
     "core-js": "^2.5.4",
     "hammerjs": "2.0.8",
     "lodash": "4.17.10",
+    "moment": "^2.22.2",
+    "moment-range": "^4.0.1",
     "rxjs": "^6.0.0",
     "zone.js": "^0.8.26"
   },
