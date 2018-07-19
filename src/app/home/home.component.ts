@@ -72,13 +72,7 @@ export class ChartDatabase {
       node.progress = step.progress;
       node.dates = step.dates;
       // build progress dates
-      const start = this.moment(step.dates.start);
-      const end = this.moment(step.dates.end);
-      const range = moment.range(start, end);
-
-      const numDays = Math.round(range.diff('days') * node.progress / 100); // estimated completed days
-      const totalDays = Array.from(range.by('days')).map(d => d.format('YYYY-MM-DD')); // all days in string array
-      node.progressDates = totalDays.splice(0, numDays); // start from 0, get the first len days
+      node.progressDates = this.setProgressDates(step);
 
       node.expanded = step.expanded !== undefined ? step.expanded : true;
 
@@ -125,6 +119,28 @@ export class ChartDatabase {
   toggleExpaned(node: Step) {
     node.expanded = !node.expanded;
     this.saveStorage(this.data);
+    console.log('data updated');
+  }
+
+  // update progress
+  updateProgress(node: Step, progress: number) {
+    node.progress = progress;
+    node.progressDates = this.setProgressDates(node);
+    this.saveStorage(this.data);
+    console.log('data updated');
+    // instead of refreshing whole tree, return progress dates and update the node only
+    return node.progressDates;
+  }
+
+  // update progress dates
+  setProgressDates(step: Step) {
+    const start = this.moment(step.dates.start);
+    const end = this.moment(step.dates.end);
+    const range = moment.range(start, end);
+
+    const numDays = Math.round(Array.from(range.by('days')).length * step.progress / 100); // estimated completed days
+    const totalDays = Array.from(range.by('days')).map(d => d.format('YYYY-MM-DD')); // all days in string array
+    return totalDays.splice(0, numDays); // start from 0, get the first len days
   }
 }
 
@@ -246,6 +262,12 @@ export class HomeComponent implements OnInit {
   toggleExpanded(node: StepFlatNode) {
     const nestedNode = this.flatNodeMap.get(node);
     this.database.toggleExpaned(nestedNode);
+  }
+
+  updateProgress(node: StepFlatNode, progress: number) {
+    const nestedNode = this.flatNodeMap.get(node);
+    const newProgressDates = this.database.updateProgress(nestedNode, progress);
+    node.progressDates = newProgressDates;
   }
 
   /** resize and validate */

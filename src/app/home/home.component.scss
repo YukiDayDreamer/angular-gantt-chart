@@ -44,7 +44,26 @@ $borderColor: #BDBDBD;
 
 .sidenav.names {
   mat-tree.tree {
-  padding-top: 14px; // align the lines of input and table
+    padding-top: 14px; // align the lines of input and table
+  }
+}
+
+/** progress */
+
+.sidenav.progress-bars {
+  flex: 0 0 200px;
+  mat-tree.tree {
+    padding-top: 8px; // align the sliders and table
+    border-width: 0 3px 0 0;
+    border-color: $borderColor;
+    border-style: solid;
+  }
+}
+
+::ng-deep mat-slider.progress {
+  margin: 0 10px;
+  width: 100%;
+  height: unset;
 }
 
 /** calendar */

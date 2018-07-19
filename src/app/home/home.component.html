@@ -9,18 +9,21 @@
   <div class="sidenav-container" fxFlex fxLayout="row">
     <!-- names -->
     <div class="sidenav names" [ngStyle]="sidebarStyle" fxLayout="column">
-      <div class="sidenav-header text-center">
-        Overall Progress: {{chartData == null ? null : chartData.progress}}%
-      </div>
+      <div class="sidenav-header text-center"></div>
       <mat-tree class="tree" fxFlex [dataSource]="dataSource" [treeControl]="treeControl" [ngStyle]="sidebarStyle" mwlResizable
         [resizeEdges]="{right: true}" [enableGhostResize]="true" [resizeSnapGrid]="{right: 1}" (resizeEnd)="onResizeEnd($event)">
         <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
           <button mat-icon-button disabled></button>
           <mat-form-field floatLabel="never">
-            <input matInput placeholder="Step Name" name="node" [(ngModel)]="node.name" (ngModelChange)="updateStepName(node, $event)" required>
+            <input matInput placeholder="Step Name" name="node" [(ngModel)]="node.name" (ngModelChange)="updateStepName(node, $event)"
+              required>
           </mat-form-field>
-          <button mat-icon-button (click)="addChildStep(node)" class="text-green" *ngIf="node.level<3"><mat-icon>add</mat-icon></button>
-          <button mat-icon-button (click)="deleteStep(node)" class="text-red" *ngIf="node.level!==0"><mat-icon>delete</mat-icon></button>
+          <button mat-icon-button (click)="addChildStep(node)" class="text-green" *ngIf="node.level<3">
+            <mat-icon>add</mat-icon>
+          </button>
+          <button mat-icon-button (click)="deleteStep(node)" class="text-red" *ngIf="node.level!==0">
+            <mat-icon>delete</mat-icon>
+          </button>
         </mat-tree-node>
         <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding>
           <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
@@ -29,10 +32,25 @@
             </mat-icon>
           </button>
           <mat-form-field floatLabel="never">
-            <input matInput placeholder="Step Name" name="node" [(ngModel)]="node.name" (ngModelChange)="updateStepName(node, $event)" required>
+            <input matInput placeholder="Step Name" name="node" [(ngModel)]="node.name" (ngModelChange)="updateStepName(node, $event)"
+              required>
           </mat-form-field>
-          <button mat-icon-button (click)="addChildStep(node)" class="text-green" *ngIf="node.level<3"><mat-icon>add</mat-icon></button>
-          <button mat-icon-button (click)="deleteStep(node)" class="text-red" *ngIf="node.level!==0"><mat-icon>delete</mat-icon></button>
+          <button mat-icon-button (click)="addChildStep(node)" class="text-green" *ngIf="node.level<3">
+            <mat-icon>add</mat-icon>
+          </button>
+          <button mat-icon-button (click)="deleteStep(node)" class="text-red" *ngIf="node.level!==0">
+            <mat-icon>delete</mat-icon>
+          </button>
+        </mat-tree-node>
+      </mat-tree>
+    </div>
+    <!-- progress -->
+    <div class="sidenav progress-bars" fxLayout="column">
+      <div class="sidenav-header text-center">Progress</div>
+      <mat-tree class="tree" fxFlex [dataSource]="dataSource" [treeControl]="treeControl">
+        <mat-tree-node *matTreeNodeDef="let node" class="progress-row">
+          <mat-slider class="progress" [max]="100" [min]="0" [step]="5" [thumbLabel]="true" [tickInterval]="2" [(ngModel)]="node.progress"
+            (ngModelChange)="updateProgress(node, $event)"></mat-slider>
         </mat-tree-node>
       </mat-tree>
     </div>
@@ -43,11 +61,6 @@
       </div>
       <mat-tree class="tree" fxFlex [dataSource]="dataSource" [treeControl]="treeControl">
         <mat-tree-node *matTreeNodeDef="let node" class="calendar-row">
-          <div *ngFor="let date of dates; let i=index;" class="calendar-cell" [attr.date-filled]="node.progressDates.indexOf(date)>-1"
-            [attr.date-inside]="date>=node.dates.start&&date<=node.dates.end">
-          </div>
-        </mat-tree-node>
-        <mat-tree-node *matTreeNodeDef="let node; when: hasChild" class="calendar-row">
           <div *ngFor="let date of dates; let i=index;" class="calendar-cell" [attr.date-filled]="node.progressDates.indexOf(date)>-1"
             [attr.date-inside]="date>=node.dates.start&&date<=node.dates.end">
           </div>
