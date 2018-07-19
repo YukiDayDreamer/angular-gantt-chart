@@ -17,18 +17,22 @@
         <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
           <button mat-icon-button disabled></button>
           <mat-form-field floatLabel="never">
-            <input matInput placeholder="Step Name" name="node" [ngModel]="node.name" required>
+            <input matInput placeholder="Step Name" name="node" [(ngModel)]="node.name" (ngModelChange)="updateStepName(node, $event)" required>
           </mat-form-field>
+          <button mat-icon-button (click)="addChildStep(node)" class="text-green" *ngIf="node.level<3"><mat-icon>add</mat-icon></button>
+          <button mat-icon-button (click)="deleteStep(node)" class="text-red" *ngIf="node.level!==0"><mat-icon>delete</mat-icon></button>
         </mat-tree-node>
         <mat-tree-node *matTreeNodeDef="let node;when: hasChild" matTreeNodePadding>
           <button mat-icon-button matTreeNodeToggle [attr.aria-label]="'toggle ' + node.name">
-            <mat-icon class="mat-icon-rtl-mirror">
+            <mat-icon class="mat-icon-rtl-mirror" (click)="toggleExpanded(node)">
               {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
             </mat-icon>
           </button>
           <mat-form-field floatLabel="never">
-            <input matInput placeholder="Step Name" name="node" [ngModel]="node.name" required>
+            <input matInput placeholder="Step Name" name="node" [(ngModel)]="node.name" (ngModelChange)="updateStepName(node, $event)" required>
           </mat-form-field>
+          <button mat-icon-button (click)="addChildStep(node)" class="text-green" *ngIf="node.level<3"><mat-icon>add</mat-icon></button>
+          <button mat-icon-button (click)="deleteStep(node)" class="text-red" *ngIf="node.level!==0"><mat-icon>delete</mat-icon></button>
         </mat-tree-node>
       </mat-tree>
     </div>

@@ -7,14 +7,12 @@ $incompleteColor: #9E9E9E;
 $borderColor: #BDBDBD;
 // sidenav
 .sidenav {
-  width: 250px;
-  min-height: 100%;
+  width: 400px;
   height: fit-content;
 }
 
 // table content
 .sidenav-content {
-  min-height: 100%;
   height: fit-content;
   overflow-x: auto;
 }
@@ -44,7 +42,8 @@ $borderColor: #BDBDBD;
 
 /** names */
 
-.sidenav.names mat-tree.tree {
+.sidenav.names {
+  mat-tree.tree {
   padding-top: 14px; // align the lines of input and table
 }
 

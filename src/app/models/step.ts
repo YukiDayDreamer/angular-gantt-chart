@@ -7,4 +7,5 @@ export class Step {
     end: string;
   };
   steps: Step[];
+  expanded: boolean; // status of expanded
 }

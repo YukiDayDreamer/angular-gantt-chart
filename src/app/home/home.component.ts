@@ -21,25 +21,48 @@ export class StepFlatNode {
     public dates: {
       start: string;
       end: string;
-    }) { }
+    },
+    public expanded: boolean) { }
 }
 
 @Injectable()
 export class ChartDatabase {
   moment = moment;
   dataChange = new BehaviorSubject<Step>(null);
+  storageKey = 'ChartDate';
+
+  get data(): Step { return this.dataChange.value; }
 
   constructor(private http: HttpClient) {
     this.initialize();
+    this.dataChange.asObservable().subscribe(val => {
+      this.saveStorage(val);
+    });
+  }
+
+  // load local data
+  loadStorage() {
+    const store = localStorage.getItem(this.storageKey);
+    return JSON.parse(store);
+  }
+
+  // save local data
+  saveStorage(val) {
+    localStorage.setItem(this.storageKey, JSON.stringify(val));
   }
 
   initialize() {
     // Parse the string to json object.
-    this.http.get('../../assets/data/tree.json').subscribe((root: Step) => {
-      const tree = this.buildTree(root.steps, 0); // build tree
-      root.steps = tree;
-      this.dataChange.next(root);
-    });
+    const store = this.loadStorage();
+    if (store) {
+      const tree = this.buildTree([store], 0); // build tree
+      this.dataChange.next(tree[0]);
+    } else {
+      this.http.get('../../assets/data/tree.json').subscribe((root: Step) => {
+        const tree = this.buildTree([root], 0); // build tree
+        this.dataChange.next(tree[0]);
+      });
+    }
   }
 
   buildTree(steps: Array<any>, level: number): Step[] {
@@ -57,6 +80,8 @@ export class ChartDatabase {
       const totalDays = Array.from(range.by('days')).map(d => d.format('YYYY-MM-DD')); // all days in string array
       node.progressDates = totalDays.splice(0, numDays); // start from 0, get the first len days
 
+      node.expanded = step.expanded !== undefined ? step.expanded : true;
+
       if (step.steps.length) {
         node.steps = this.buildTree(step.steps, level + 1);
       } else {
@@ -66,6 +91,41 @@ export class ChartDatabase {
     });
   }
 
+  /** step manipulations */
+  // update step name
+  updateStepName(node: Step, name: string) {
+    node.name = name;
+    // do not update tree, otherwise will interupt the typing
+    this.saveStorage(this.data);
+    console.log('data updated');
+  }
+
+  // add child step
+  addChildStep(parent: Step) {
+    const child = new Step();
+    child.name = 'new step';
+    child.progress = 0;
+    child.progressDates = [];
+    child.dates = parent.dates;
+    child.steps = [];
+    parent.steps.push(child);
+    this.dataChange.next(this.data);
+    console.log('data updated');
+  }
+
+  // delete step
+  deleteStep(parent: Step, child: Step) {
+    const childIndex = parent.steps.indexOf(child);
+    parent.steps.splice(childIndex, 1);
+    this.dataChange.next(this.data);
+    console.log('data updated');
+  }
+
+  // toggle expanded
+  toggleExpaned(node: Step) {
+    node.expanded = !node.expanded;
+    this.saveStorage(this.data);
+  }
 }
 
 /**
@@ -83,6 +143,12 @@ export class HomeComponent implements OnInit {
 
   utils = Utils;
 
+  /** Map from flat node to nested node. This helps us finding the nested node to be modified */
+  flatNodeMap: Map<StepFlatNode, Step> = new Map<StepFlatNode, Step>();
+
+  /** Map from nested node to flattened node. This helps us to keep the same object for selection */
+  nestedNodeMap: Map<Step, StepFlatNode> = new Map<Step, StepFlatNode>();
+
   treeControl: FlatTreeControl<StepFlatNode>;
   treeFlattener: MatTreeFlattener<Step, StepFlatNode>;
   dataSource: MatTreeFlatDataSource<Step, StepFlatNode>;
@@ -91,25 +157,38 @@ export class HomeComponent implements OnInit {
 
   sidebarStyle = {};
 
-  constructor(database: ChartDatabase) {
+  constructor(private database: ChartDatabase) {
     this.treeFlattener = new MatTreeFlattener(this.transformer, this._getLevel,
       this._isExpandable, this._getChildren);
     this.treeControl = new FlatTreeControl<StepFlatNode>(this._getLevel, this._isExpandable);
     this.dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 
-    database.dataChange.subscribe((root: Step) => {
-      if (root) {
-        this.chartData = root;
-        this.dataSource.data = root.steps;
-        this.dates = this.buildCalendar(root);
-        console.log(root);
+    database.dataChange.subscribe((tree: Step) => {
+      if (tree) {
+        this.chartData = tree;
+        this.dataSource.data = [tree];
+        this.dates = this.buildCalendar(tree);
+
+        /** expand tree based on status */
+        this.treeControl.dataNodes.forEach(node => {
+          if (node.expanded) {
+            this.treeControl.expand(node);
+          } else {
+            this.treeControl.collapse(node);
+          }
+        });
+
+        console.log(tree);
       }
     });
   }
 
   /** utils of building tree */
   transformer = (node: Step, level: number) => {
-    return new StepFlatNode(!!node.steps.length, level, node.name, node.progress, node.progressDates, node.dates);
+    const flatNode = new StepFlatNode(!!node.steps.length, level, node.name, node.progress, node.progressDates, node.dates, node.expanded);
+    this.flatNodeMap.set(flatNode, node);
+    this.nestedNodeMap.set(node, flatNode);
+    return flatNode;
   }
 
   private _getLevel = (node: StepFlatNode) => node.level;
@@ -122,6 +201,51 @@ export class HomeComponent implements OnInit {
   /** end of utils of building tree */
 
   ngOnInit() {
+  }
+
+  /** tree nodes manipulations */
+  updateStepName(node: StepFlatNode, name: string) {
+    const nestedNode = this.flatNodeMap.get(node);
+    this.database.updateStepName(nestedNode, name);
+  }
+
+  addChildStep(node: StepFlatNode) {
+    const nestedNode = this.flatNodeMap.get(node);
+    this.database.addChildStep(nestedNode);
+  }
+
+  deleteStep(node: StepFlatNode) {
+    // if root, ignore
+    if (this.treeControl.getLevel(node) < 1) {
+      return null;
+    }
+
+    const parentFlatNode = this.getParentStep(node);
+    const parentNode = this.flatNodeMap.get(parentFlatNode);
+    const childNode = this.flatNodeMap.get(node);
+    this.database.deleteStep(parentNode, childNode);
+  }
+
+  getParentStep(node: StepFlatNode) {
+    const { treeControl } = this;
+    const currentLevel = treeControl.getLevel(node);
+    // if root, ignore
+    if (currentLevel < 1) {
+      return null;
+    }
+    const startIndex = treeControl.dataNodes.indexOf(node) - 1;
+    // loop back to find the nearest upper node
+    for (let i = startIndex; i >= 0; i--) {
+      const currentNode = treeControl.dataNodes[i];
+      if (treeControl.getLevel(currentNode) < currentLevel) {
+        return currentNode;
+      }
+    }
+  }
+
+  toggleExpanded(node: StepFlatNode) {
+    const nestedNode = this.flatNodeMap.get(node);
+    this.database.toggleExpaned(nestedNode);
   }
 
   /** resize and validate */
