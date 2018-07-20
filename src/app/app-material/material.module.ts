@@ -35,6 +35,7 @@ import {
   MatTooltipModule,
   MatTreeModule
 } from '@angular/material';
+import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
 @NgModule({
   exports: [
@@ -71,6 +72,7 @@ import {
     MatToolbarModule,
     MatTooltipModule,
     MatTreeModule,
+    MatMomentDateModule
   ]
 })
 export class MaterialModule { }

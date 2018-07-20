@@ -44,6 +44,25 @@
         </mat-tree-node>
       </mat-tree>
     </div>
+    <!-- date pickers -->
+    <div class="sidenav date-pickers" fxLayout="column">
+      <div class="sidenav-header text-center">Dates</div>
+      <mat-tree class="tree" fxFlex [dataSource]="dataSource" [treeControl]="treeControl">
+        <mat-tree-node *matTreeNodeDef="let node">
+          <mat-form-field class="date-picker" floatLabel="never">
+            <input matInput [matDatepicker]="startDate" [min]="node.level > 0 ? getParentStep(node).dates.start : null" [max]="node.level > 0 ? getParentStep(node).dates.end : null" [(ngModel)]="node.dates.start" (ngModelChange)="updateDateRange(node)">
+            <mat-datepicker-toggle matSuffix [for]="startDate"></mat-datepicker-toggle>
+            <mat-datepicker #startDate></mat-datepicker>
+          </mat-form-field>
+          &nbsp;&nbsp;-&nbsp;&nbsp;
+          <mat-form-field class="date-picker" floatLabel="never">
+            <input matInput [matDatepicker]="endDate" [min]="node.level > 0 ? getParentStep(node).dates.start : null" [max]="node.level > 0 ? getParentStep(node).dates.end : null" [(ngModel)]="node.dates.end" (ngModelChange)="updateDateRange(node)">
+            <mat-datepicker-toggle matSuffix [for]="endDate"></mat-datepicker-toggle>
+            <mat-datepicker #endDate></mat-datepicker>
+          </mat-form-field>
+        </mat-tree-node>
+      </mat-tree>
+    </div>
     <!-- progress -->
     <div class="sidenav progress-bars" fxLayout="column">
       <div class="sidenav-header text-center">Progress</div>

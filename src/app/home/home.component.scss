@@ -48,6 +48,24 @@ $borderColor: #BDBDBD;
   }
 }
 
+/** date picker */
+
+.sidenav.date-pickers {
+  flex: 0 0 250px;
+  mat-tree.tree {
+    padding-top: 14px; // align the lines and table
+    border-width: 0 3px 0 0;
+    border-color: $borderColor;
+    border-style: solid;
+    mat-tree-node {
+      justify-content: center;
+      mat-form-field {
+        width: 100px;
+      }
+    }
+  }
+}
+
 /** progress */
 
 .sidenav.progress-bars {

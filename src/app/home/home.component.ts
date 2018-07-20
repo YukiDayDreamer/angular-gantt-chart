@@ -142,6 +142,16 @@ export class ChartDatabase {
     const totalDays = Array.from(range.by('days')).map(d => d.format('YYYY-MM-DD')); // all days in string array
     return totalDays.splice(0, numDays); // start from 0, get the first len days
   }
+
+  // update date range
+  updateDateRange(node: Step) {
+    node.progressDates = this.setProgressDates(node);
+    this.saveStorage(this.data);
+    console.log('data updated');
+    // instead of refreshing whole tree, return progress dates and update the node only
+    return node.progressDates;
+  }
+
 }
 
 /**
@@ -267,6 +277,15 @@ export class HomeComponent implements OnInit {
   updateProgress(node: StepFlatNode, progress: number) {
     const nestedNode = this.flatNodeMap.get(node);
     const newProgressDates = this.database.updateProgress(nestedNode, progress);
+    node.progressDates = newProgressDates;
+  }
+
+  updateDateRange(node: StepFlatNode) {
+    // convert moment to string
+    node.dates.start = this.moment(node.dates.start).format('YYYY-MM-DD');
+    node.dates.end = this.moment(node.dates.end).format('YYYY-MM-DD');
+    const nestedNode = this.flatNodeMap.get(node);
+    const newProgressDates = this.database.updateDateRange(nestedNode);
     node.progressDates = newProgressDates;
   }
 
