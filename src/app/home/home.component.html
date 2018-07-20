@@ -9,7 +9,7 @@
   <div class="sidenav-container" fxFlex fxLayout="row">
     <!-- names -->
     <div class="sidenav names" [ngStyle]="sidebarStyle" fxLayout="column">
-      <div class="sidenav-header text-center"></div>
+      <div class="sidenav-header text-center">Steps</div>
       <mat-tree class="tree" fxFlex [dataSource]="dataSource" [treeControl]="treeControl" [ngStyle]="sidebarStyle" mwlResizable
         [resizeEdges]="{right: true}" [enableGhostResize]="true" [resizeSnapGrid]="{right: 1}" (resizeEnd)="onResizeEnd($event)">
         <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
