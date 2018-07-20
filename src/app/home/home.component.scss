@@ -5,6 +5,7 @@ $nodeHeight: 50px;
 $completeColor: #2196F3;
 $incompleteColor: #9E9E9E;
 $borderColor: #BDBDBD;
+$highlightBorderColor: #FF9800;
 // sidenav
 .sidenav {
   width: 400px;
@@ -101,13 +102,17 @@ $borderColor: #BDBDBD;
 ::ng-deep .calendar-cell {
   text-align: center;
   line-height: $nodeHeight - 1px;
-  width: $nodeWidth - 1px;
+  width: $nodeWidth - 2px;
   height: $nodeHeight - 1px;
-  min-width: $nodeWidth - 1px;
+  min-width: $nodeWidth - 2px;
   min-height: $nodeHeight - 1px;
-  border-width: 0.5px 1px 0.5px 0;
+  border-width: 0.5px 1px;
   border-color: $borderColor;
   border-style: solid;
+}
+
+::ng-deep .calendar-cell.today {
+  border-color: $highlightBorderColor;
 }
 
 // completed cell

@@ -76,11 +76,11 @@
     <!-- calendar -->
     <div class="sidenav-content calendar" fxLayout="column">
       <div fxLayout="row">
-        <div *ngFor="let date of dates" class="calendar-cell">{{date.slice(5)}}</div>
+        <div *ngFor="let date of dates" class="calendar-cell" [ngClass]="{today:date===today}">{{date.slice(5)}}</div>
       </div>
       <mat-tree class="tree" fxFlex [dataSource]="dataSource" [treeControl]="treeControl">
         <mat-tree-node *matTreeNodeDef="let node" class="calendar-row">
-          <div *ngFor="let date of dates; let i=index;" class="calendar-cell" [attr.date-filled]="node.progressDates.indexOf(date)>-1"
+          <div *ngFor="let date of dates; let i=index;" class="calendar-cell" [ngClass]="{today:date===today}"  [attr.date-filled]="node.progressDates.indexOf(date)>-1"
             [attr.date-inside]="date>=node.dates.start&&date<=node.dates.end">
           </div>
         </mat-tree-node>

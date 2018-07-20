@@ -169,6 +169,7 @@ export class ChartDatabase {
 export class HomeComponent implements OnInit {
   moment = moment;
   dates: string[] = []; // all days in chart
+  today = moment().format('YYYY-MM-DD');
 
   utils = Utils;
 
