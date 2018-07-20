@@ -100,7 +100,10 @@ export class ChartDatabase {
     child.name = 'new step';
     child.progress = 0;
     child.progressDates = [];
-    child.dates = parent.dates;
+    child.dates = {
+      start: parent.dates.start,
+      end: parent.dates.end
+    };
     child.steps = [];
     parent.steps.push(child);
     this.dataChange.next(this.data);
