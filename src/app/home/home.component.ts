@@ -52,16 +52,41 @@ export class ChartDatabase {
   }
 
   initialize() {
-    // Parse the string to json object.
-    const store = this.loadStorage();
+    const store = this.loadStorage(); // load storage
     if (store) {
       const tree = this.buildTree([store], 0); // build tree
-      this.dataChange.next(tree[0]);
+      this.dataChange.next(tree[0]); // broadcast data
     } else {
-      this.http.get('../../assets/data/tree.json').subscribe((root: Step) => {
-        const tree = this.buildTree([root], 0); // build tree
-        this.dataChange.next(tree[0]);
-      });
+      // init a new project
+      const start = moment().format('YYYY-MM-DD');
+      const end = moment().add(7, 'days').format('YYYY-MM-DD');
+      const root = {
+        'name': 'New Project',
+        'progress': 0,
+        'dates': {
+          'start': start,
+          'end': end,
+        },
+        'steps': [{
+          'name': 'Step 1',
+          'progress': 0,
+          'dates': {
+            'start': start,
+            'end': end
+          },
+          'steps': []
+        }, {
+          'name': 'Step 2',
+          'progress': 0,
+          'dates': {
+            'start': start,
+            'end': end
+          },
+          'steps': []
+        }]
+      };
+      const tree = this.buildTree([root], 0); // build tree
+      this.dataChange.next(tree[0]); // broadcast data
     }
   }
 
