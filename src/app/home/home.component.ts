@@ -197,7 +197,7 @@ export class HomeComponent implements OnInit {
       if (tree) {
         this.chartData = tree;
         this.dataSource.data = [tree];
-        this.dates = this.buildCalendar(tree);
+        this.buildCalendar(tree);
 
         /** expand tree based on status */
         this.treeControl.dataNodes.forEach(node => {
@@ -285,10 +285,14 @@ export class HomeComponent implements OnInit {
   }
 
   updateDateRange(node: StepFlatNode) {
-    // convert moment to string
-    node.dates.start = this.moment(node.dates.start).format('YYYY-MM-DD');
-    node.dates.end = this.moment(node.dates.end).format('YYYY-MM-DD');
+    node.dates.start = this.moment(node.dates.start).format('YYYY-MM-DD'); // convert moment to string
+    node.dates.end = this.moment(node.dates.end).format('YYYY-MM-DD'); // convert moment to string
     const nestedNode = this.flatNodeMap.get(node);
+    /** rebuild calendar if the root is updated */
+    if (node.level === 0) {
+      this.buildCalendar(nestedNode);
+    }
+    /** update progress dates */
     const newProgressDates = this.database.updateDateRange(nestedNode);
     node.progressDates = newProgressDates;
   }
@@ -317,7 +321,7 @@ export class HomeComponent implements OnInit {
     const range = this.moment.range(start, end);
 
     const days = Array.from(range.by('days'));
-    return days.map(d => d.format('YYYY-MM-DD'));
+    this.dates = days.map(d => d.format('YYYY-MM-DD'));
   }
 
 }
