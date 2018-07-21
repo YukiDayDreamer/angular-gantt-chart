@@ -96,6 +96,7 @@ export class ChartDatabase {
 
   // add child step
   addChildStep(parent: Step) {
+    parent.expanded = true; // set parent node expanded to show children
     const child = new Step();
     child.name = 'new step';
     child.progress = 0;
