@@ -67,21 +67,21 @@ export class ChartDatabase {
 
   buildTree(steps: Array<any>, level: number): Step[] {
     return steps.map((step: Step) => {
-      const node = new Step();
-      node.name = step.name;
-      node.progress = step.progress;
-      node.dates = step.dates;
+      const newStep = new Step();
+      newStep.name = step.name;
+      newStep.progress = step.progress;
+      newStep.dates = step.dates;
       // build progress dates
-      node.progressDates = this.setProgressDates(step);
+      newStep.progressDates = this.setProgressDates(step);
 
-      node.expanded = step.expanded !== undefined ? step.expanded : true;
+      newStep.expanded = step.expanded !== undefined ? step.expanded : true;
 
       if (step.steps.length) {
-        node.steps = this.buildTree(step.steps, level + 1);
+        newStep.steps = this.buildTree(step.steps, level + 1);
       } else {
-        node.steps = [];
+        newStep.steps = [];
       }
-      return node;
+      return newStep;
     });
   }
 
@@ -98,7 +98,7 @@ export class ChartDatabase {
   addChildStep(parent: Step) {
     parent.expanded = true; // set parent node expanded to show children
     const child = new Step();
-    child.name = 'new step';
+    child.name = 'New Step';
     child.progress = 0;
     child.progressDates = [];
     child.dates = {
@@ -120,20 +120,20 @@ export class ChartDatabase {
   }
 
   // toggle expanded
-  toggleExpaned(node: Step) {
-    node.expanded = !node.expanded;
+  toggleExpaned(step: Step) {
+    step.expanded = !step.expanded;
     this.saveStorage(this.data);
     console.log('data updated');
   }
 
   // update progress
-  updateProgress(node: Step, progress: number) {
-    node.progress = progress;
-    node.progressDates = this.setProgressDates(node);
+  updateProgress(step: Step, progress: number) {
+    step.progress = progress;
+    step.progressDates = this.setProgressDates(step);
     this.saveStorage(this.data);
     console.log('data updated');
-    // instead of refreshing whole tree, return progress dates and update the node only
-    return node.progressDates;
+    // instead of refreshing whole tree, return progress dates and update the step only
+    return step.progressDates;
   }
 
   // update progress dates
@@ -148,12 +148,12 @@ export class ChartDatabase {
   }
 
   // update date range
-  updateDateRange(node: Step) {
-    node.progressDates = this.setProgressDates(node);
+  updateDateRange(step: Step) {
+    step.progressDates = this.setProgressDates(step);
     this.saveStorage(this.data);
     console.log('data updated');
-    // instead of refreshing whole tree, return progress dates and update the node only
-    return node.progressDates;
+    // instead of refreshing whole tree, return progress dates and update the step only
+    return step.progressDates;
   }
 
 }
