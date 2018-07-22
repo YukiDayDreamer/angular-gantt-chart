@@ -1,5 +1,4 @@
 import { Component, OnInit, Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
 import { ResizeEvent } from 'angular-resizable-element';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
@@ -9,21 +8,7 @@ import { extendMoment } from 'moment-range';
 const moment = extendMoment(Moment);
 
 import { Step } from '../models/step';
-
-import * as Utils from '../utils';
-
-/** Flat node with expandable and level information */
-export class StepFlatNode {
-  constructor(
-    public expandable: boolean, public level: number,
-    public name: string, public progress: number,
-    public progressDates: string[],
-    public dates: {
-      start: string;
-      end: string;
-    },
-    public expanded: boolean) { }
-}
+import { StepFlatNode } from '../models/stepFlatNode';
 
 @Injectable()
 export class ChartDatabase {
@@ -33,7 +18,7 @@ export class ChartDatabase {
 
   get data(): Step { return this.dataChange.value; }
 
-  constructor(private http: HttpClient) {
+  constructor() {
     this.initialize();
     this.dataChange.asObservable().subscribe(val => {
       this.saveStorage(val);
@@ -110,6 +95,17 @@ export class ChartDatabase {
     });
   }
 
+  // update progress dates
+  setProgressDates(step: Step) {
+    const start = this.moment(step.dates.start);
+    const end = this.moment(step.dates.end);
+    const range = moment.range(start, end);
+
+    const numDays = Math.round(Array.from(range.by('days')).length * step.progress / 100); // estimated completed days
+    const totalDays = Array.from(range.by('days')).map(d => d.format('YYYY-MM-DD')); // all days in string array
+    return totalDays.splice(0, numDays); // start from 0, get the first len days
+  }
+
   /** step manipulations */
   // update step name
   updateStepName(node: Step, name: string) {
@@ -161,17 +157,6 @@ export class ChartDatabase {
     return step.progressDates;
   }
 
-  // update progress dates
-  setProgressDates(step: Step) {
-    const start = this.moment(step.dates.start);
-    const end = this.moment(step.dates.end);
-    const range = moment.range(start, end);
-
-    const numDays = Math.round(Array.from(range.by('days')).length * step.progress / 100); // estimated completed days
-    const totalDays = Array.from(range.by('days')).map(d => d.format('YYYY-MM-DD')); // all days in string array
-    return totalDays.splice(0, numDays); // start from 0, get the first len days
-  }
-
   // update date range
   updateDateRange(step: Step) {
     step.progressDates = this.setProgressDates(step);
@@ -196,8 +181,6 @@ export class HomeComponent implements OnInit {
   moment = moment;
   dates: string[] = []; // all days in chart
   today = moment().format('YYYY-MM-DD');
-
-  utils = Utils;
 
   /** Map from flat node to nested node. This helps us finding the nested node to be modified */
   flatNodeMap: Map<StepFlatNode, Step> = new Map<StepFlatNode, Step>();
