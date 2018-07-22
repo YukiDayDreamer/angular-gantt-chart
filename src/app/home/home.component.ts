@@ -29,7 +29,7 @@ export class StepFlatNode {
 export class ChartDatabase {
   moment = moment;
   dataChange = new BehaviorSubject<Step>(null);
-  storageKey = 'ChartDate';
+  storageKey = 'ChartData';
 
   get data(): Step { return this.dataChange.value; }
 
