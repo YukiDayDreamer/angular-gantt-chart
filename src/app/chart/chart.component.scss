@@ -1,0 +1,127 @@
+// variables
+$toolbarHeight: 64px;
+$nodeWidth: 60px;
+$nodeHeight: 50px;
+$completeColor: #2196F3;
+$incompleteColor: #9E9E9E;
+$borderColor: #BDBDBD;
+$highlightBorderColor: #FF9800;
+// sidenav
+.sidenav {
+  width: 400px;
+  height: fit-content;
+}
+
+// table content
+.sidenav-content {
+  height: fit-content;
+  overflow-x: auto;
+}
+
+// resizable border
+[mwlResizable] {
+  border-right: 3px solid $borderColor;
+  box-sizing: border-box;
+}
+
+// sidenav header(not calendar)
+.sidenav-header {
+  text-align: center;
+  line-height: $nodeHeight - 2px;
+  height: $nodeHeight - 2px;
+  min-height: $nodeHeight - 2px;
+  border-width: 1px 3px 1px 0;
+  border-color: $borderColor;
+  border-style: solid;
+}
+
+// tree node height for sidebar
+::ng-deep mat-tree-node {
+  height: $nodeHeight;
+  min-height: $nodeHeight;
+}
+
+/** names */
+
+.sidenav.names {
+  mat-tree.tree {
+    padding-top: 14px; // align the lines of input and table
+  }
+}
+
+/** date picker */
+
+.sidenav.date-pickers {
+  flex: 0 0 250px;
+  mat-tree.tree {
+    padding-top: 14px; // align the lines and table
+    border-width: 0 3px 0 0;
+    border-color: $borderColor;
+    border-style: solid;
+    mat-tree-node {
+      justify-content: center;
+      mat-form-field {
+        width: 100px;
+      }
+    }
+  }
+}
+
+/** progress */
+
+.sidenav.progress-bars {
+  flex: 0 0 200px;
+  mat-tree.tree {
+    padding-top: 8px; // align the sliders and table
+    border-width: 0 3px 0 0;
+    border-color: $borderColor;
+    border-style: solid;
+  }
+}
+
+::ng-deep mat-slider.progress {
+  margin: 0 10px;
+  width: 100%;
+  height: unset;
+}
+
+/** calendar */
+
+// header
+::ng-deep .calendar-header {
+  height: $nodeHeight;
+  min-height: $nodeHeight;
+}
+
+// row
+::ng-deep mat-tree-node.calendar-row {
+  overflow: unset; // allow the row to overflow
+}
+
+// cell
+::ng-deep .calendar-cell {
+  text-align: center;
+  line-height: $nodeHeight - 1px;
+  width: $nodeWidth - 2px;
+  height: $nodeHeight - 1px;
+  min-width: $nodeWidth - 2px;
+  min-height: $nodeHeight - 1px;
+  border-width: 0.5px 1px;
+  border-color: $borderColor;
+  border-style: solid;
+}
+
+::ng-deep .calendar-cell.today {
+  border-color: $highlightBorderColor;
+  border-width: 0.5px 5px;
+}
+
+// completed cell
+::ng-deep .calendar-cell[date-filled=true][date-inside=true] {
+  background-color: $completeColor;
+}
+
+// incompleted cell
+::ng-deep .calendar-cell[date-filled=false][date-inside=true] {
+  background-color: $incompleteColor;
+}

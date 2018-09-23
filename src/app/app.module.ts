@@ -12,6 +12,7 @@ import 'hammerjs';
 
 import { AppComponent } from './app.component';
 import { HomeComponent } from './home/home.component';
+import { ChartComponent } from './chart/chart.component';
 
 @NgModule({
   imports: [
@@ -26,7 +27,8 @@ import { HomeComponent } from './home/home.component';
   ],
   declarations: [
     AppComponent,
-    HomeComponent
+    HomeComponent,
+    ChartComponent
   ],
   providers: [],
   bootstrap: [AppComponent]
