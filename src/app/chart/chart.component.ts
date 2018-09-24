@@ -1,4 +1,5 @@
 import { Component, OnInit, Injectable } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 import { ResizeEvent } from 'angular-resizable-element';
 import { FlatTreeControl } from '@angular/cdk/tree';
 import { MatTreeFlatDataSource, MatTreeFlattener } from '@angular/material/tree';
@@ -12,14 +13,18 @@ import { StepFlatNode } from '../models/stepFlatNode';
 
 @Injectable()
 export class ChartDatabase {
+  id; // chart id
   moment = moment;
   dataChange = new BehaviorSubject<Step>(null);
-  storageKey = 'ChartData';
+  storageKey = 'charts';
 
   get data(): Step { return this.dataChange.value; }
 
-  constructor() {
-    this.initialize();
+  constructor(private route: ActivatedRoute) {
+    this.route.params.subscribe(params => {
+      this.id = params['id'];
+      this.initialize();
+    });
     this.dataChange.asObservable().subscribe(val => {
       this.saveStorage(val);
     });
@@ -27,19 +32,21 @@ export class ChartDatabase {
 
   // load local data
   loadStorage() {
-    const store = localStorage.getItem(this.storageKey);
-    return JSON.parse(store);
+    const charts = localStorage.getItem(this.storageKey);
+    return JSON.parse(charts);
   }
 
   // save local data
   saveStorage(val) {
-    localStorage.setItem(this.storageKey, JSON.stringify(val));
+    const charts = JSON.parse(localStorage.getItem(this.storageKey)) as Array<Step>;
+    charts[this.id] = val;
+    localStorage.setItem(this.storageKey, JSON.stringify(charts));
   }
 
   initialize() {
-    const store = this.loadStorage(); // load storage
-    if (store) {
-      const tree = this.buildTree([store], 0); // build tree
+    const charts = this.loadStorage(); // load storage of charts
+    if (charts && charts.length && charts[this.id]) {
+      const tree = this.buildTree([charts[this.id]], 0); // build tree
       this.dataChange.next(tree[0]); // broadcast data
     } else {
       // init a new project
