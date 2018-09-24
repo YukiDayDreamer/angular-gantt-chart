@@ -7,7 +7,9 @@ import {
   MatInputModule,
   MatSliderModule,
   MatToolbarModule,
-  MatTreeModule
+  MatTreeModule,
+  MatCardModule,
+  MatProgressBarModule
 } from '@angular/material';
 import { MatMomentDateModule } from '@angular/material-moment-adapter';
 
@@ -20,7 +22,9 @@ import { MatMomentDateModule } from '@angular/material-moment-adapter';
     MatSliderModule,
     MatToolbarModule,
     MatTreeModule,
-    MatMomentDateModule
+    MatMomentDateModule,
+    MatCardModule,
+    MatProgressBarModule
   ]
 })
 export class MaterialModule { }
