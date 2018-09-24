@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import * as Moment from 'moment';
 import { Step } from '../models/step';
 
@@ -14,7 +15,7 @@ export class HomeComponent implements OnInit {
   charts: Array<Step>;
   storageKey = 'charts';
 
-  constructor() { }
+  constructor(private router: Router) { }
 
   ngOnInit() {
     const store = localStorage.getItem('charts');
@@ -39,6 +40,7 @@ export class HomeComponent implements OnInit {
       'steps': []
     } as Step;
     this.charts.push(chart);
+    this.router.navigate(['charts', this.charts.indexOf(chart)]); // navigate to new chart
   }
 
   deleteChart(i: number) {
