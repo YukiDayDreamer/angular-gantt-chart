@@ -59,23 +59,7 @@ export class ChartDatabase {
           'start': start,
           'end': end,
         },
-        'steps': [{
-          'name': 'Step 1',
-          'progress': 0,
-          'dates': {
-            'start': start,
-            'end': end
-          },
-          'steps': []
-        }, {
-          'name': 'Step 2',
-          'progress': 0,
-          'dates': {
-            'start': start,
-            'end': end
-          },
-          'steps': []
-        }]
+        'steps': []
       };
       const tree = this.buildTree([root], 0); // build tree
       this.dataChange.next(tree[0]); // broadcast data
