@@ -19,7 +19,11 @@ export class HomeComponent implements OnInit {
 
   ngOnInit() {
     const store = localStorage.getItem('charts');
-    this.charts = store === undefined ? [] : JSON.parse(store);
+    if (store) {
+      this.charts = JSON.parse(store);
+    } else {
+      this.charts = [];
+    }
     // format dates
     this.charts.forEach((chart) => {
       chart.dates.start = this.moment(chart.dates.start).format('MM/DD');
