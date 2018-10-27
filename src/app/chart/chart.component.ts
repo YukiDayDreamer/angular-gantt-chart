@@ -53,7 +53,7 @@ export class ChartDatabase {
       const start = moment().format('YYYY-MM-DD');
       const end = moment().add(7, 'days').format('YYYY-MM-DD');
       const root = {
-        'name': 'New Project',
+        'name': 'Project Name',
         'progress': 0,
         'dates': {
           'start': start,
@@ -110,7 +110,7 @@ export class ChartDatabase {
   addChildStep(parent: Step) {
     parent.expanded = true; // set parent node expanded to show children
     const child = new Step();
-    child.name = 'New Step';
+    child.name = '';
     child.progress = 0;
     child.progressDates = [];
     child.dates = {
