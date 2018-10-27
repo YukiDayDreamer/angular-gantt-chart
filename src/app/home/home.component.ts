@@ -23,6 +23,7 @@ export class HomeComponent implements OnInit {
       this.charts = JSON.parse(store);
     } else {
       this.charts = [];
+      localStorage.setItem('charts', JSON.stringify([]));
     }
     // format dates
     this.charts.forEach((chart) => {
