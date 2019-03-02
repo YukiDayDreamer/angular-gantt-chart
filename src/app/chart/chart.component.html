@@ -17,7 +17,7 @@
         mwlResizable [resizeEdges]="{right: true}" [enableGhostResize]="true" [resizeSnapGrid]="{right: 1}" (resizeEnd)="onResizeEnd($event)">
         <mat-tree-node *matTreeNodeDef="let node" matTreeNodeToggle matTreeNodePadding>
           <button mat-icon-button disabled></button>
-          <mat-form-field floatLabel="never">
+          <mat-form-field fxFlex floatLabel="never">
             <input matInput placeholder="Step Name" name="node" [(ngModel)]="node.name" (ngModelChange)="updateStepName(node, $event)"
               required>
           </mat-form-field>
@@ -34,7 +34,7 @@
               {{treeControl.isExpanded(node) ? 'expand_more' : 'chevron_right'}}
             </mat-icon>
           </button>
-          <mat-form-field floatLabel="never">
+          <mat-form-field fxFlex floatLabel="never">
             <input matInput placeholder="Step Name" name="node" [(ngModel)]="node.name" (ngModelChange)="updateStepName(node, $event)"
               required>
           </mat-form-field>
